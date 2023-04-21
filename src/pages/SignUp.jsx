@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
 import { ReactComponent as ArrowRightIcon } from "../assets/svg/keyboardArrowRightIcon.svg";
 import visibilityIcon from "../assets/svg/visibilityIcon.svg";
 import { useState } from "react";
@@ -56,8 +57,9 @@ const SignUp = () => {
       // uploading user info to the database
       await setDoc(doc(db, "users", user.uid), formData);
 
+      toast.success("You've been registered successfully");
     } catch (error) {
-      console.log(error.message);
+      toast.error("Something went wrong");
     }
   };
 
