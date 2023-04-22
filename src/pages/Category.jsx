@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import {
   collection,
   getDocs,
@@ -12,9 +13,10 @@ import { toast } from "react-toastify";
 import Spinner from "../components/Spinner";
 import ListingItem from "../components/ListingItem";
 
-const Offers = () => {
+const Category = () => {
   const [listings, setListings] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const params = useParams();
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -25,7 +27,7 @@ const Offers = () => {
         // creating a query
         const q = query(
           listingsRef,
-          where("offer", "==", true),
+          where("type", "==", params.categoryName),
           orderBy("timestamp", "desc"),
           limit(10)
         );
@@ -46,19 +48,20 @@ const Offers = () => {
         setIsLoading(false);
       } catch (error) {
         toast.error("Could not fetch listings");
-        // console.log(error)
       }
     };
 
     fetchListings();
-  }, []);
+  }, [params.categoryName]);
 
   if (isLoading) return <Spinner />;
 
   return (
     <div className="category">
       <header>
-        <p className="pageHeader">Offers</p>
+        <p className="pageHeader">
+          Places for {params.categoryName === "rent" ? "rent" : "sale"}
+        </p>
       </header>
 
       {listings && listings.length > 0 ? (
@@ -74,10 +77,10 @@ const Offers = () => {
           </ul>
         </main>
       ) : (
-        <p>There are no current offers</p>
+        <p>No listings for {params.categoryName}</p>
       )}
     </div>
   );
 };
 
-export default Offers;
+export default Category;
