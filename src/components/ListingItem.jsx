@@ -12,7 +12,7 @@ const ListingItem = ({ listingData, id, handleDelete }) => {
         className="categoryListingLink"
       >
         <img
-          src={listingData.imgUrl[0]}
+          src={listingData.imageUrls[0]}
           alt={listingData.name}
           className="categoryListingImg"
         />
