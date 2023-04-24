@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "react-alice-carousel/lib/alice-carousel.css";
 import Explore from "./pages/Explore";
 import Offers from "./pages/Offers";
 import SignIn from "./pages/SignIn";
