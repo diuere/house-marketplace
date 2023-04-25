@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getAuth, updateProfile } from "firebase/auth";
-import { updateDoc, doc } from "firebase/firestore";
+import { updateDoc, doc, where, deleteDoc } from "firebase/firestore";
 import { db } from "../misc/firebase";
 import arrowRight from "../assets/svg/keyboardArrowRightIcon.svg";
 import homeIcon from "../assets/svg/homeIcon.svg";
+import { fetchListings } from "../helpers/utils";
+import ListingItem from "../components/ListingItem";
 
 const Profile = () => {
   const auth = getAuth();
@@ -14,8 +16,18 @@ const Profile = () => {
     email: auth.currentUser.email,
   });
   const [isDetailsChanging, setIsDetailsChanging] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [listings, setListings] = useState(null);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    fetchListings(where("userRef", "==", auth.currentUser.uid), undefined)
+      .then((data) => {
+        setListings(data);
+        setIsLoading(false);
+      })
+      .catch((err) => console.log(err));
+  }, [auth.currentUser.uid]);
   const handleLogout = (e) => {
     auth.signOut();
     navigate("/sign-in");
@@ -48,6 +60,25 @@ const Profile = () => {
       toast.error("Couldn't update profile details");
     }
   };
+
+  const handleListingDelete = async (listingId) => {
+    const confirm = window.confirm(
+      "Are you sure you want to delete this listing?"
+    );
+    if (confirm) {
+      await deleteDoc(doc(db, "listings", listingId));
+
+      const updatedListing = listings.filter(
+        (listing) => listing.id !== listingId
+      );
+      setListings(updatedListing);
+
+      toast.success("Listing was deleted successfully");
+    }
+  };
+
+  const handleListingEdit = (listingId) =>
+    navigate(`/edit-listing/${listingId}`);
 
   return (
     <div className="profile">
@@ -101,6 +132,23 @@ const Profile = () => {
           <p>Sell or rent your home</p>
           <img src={arrowRight} alt="arrow right icon" />
         </Link>
+
+        {!isLoading && listings?.length > 0 && (
+          <>
+            <p className="listingText">Your Listing</p>
+            <ul className="listingsList">
+              {listings.map((listing) => (
+                <ListingItem
+                  key={listing.id}
+                  listingData={listing.data}
+                  id={listing.id}
+                  handleDelete={() => handleListingDelete(listing.id)}
+                  handleEdit={() => handleListingEdit(listing.id)}
+                />
+              ))}
+            </ul>
+          </>
+        )}
       </main>
     </div>
   );

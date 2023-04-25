@@ -54,7 +54,6 @@ const Listing = () => {
       <AliceCarousel
         mouseTracking
         items={imgItems}
-        autoPlay
         disableButtonsControls
         disableDotsControls
         keyboardNavigation

@@ -18,6 +18,8 @@ const Slider = () => {
 
   if (isLoading) return <Spinner />;
 
+  if (listings.length > 0) return <></>;
+
   const handleDragStart = (e) => e.preventDefault();
 
   const imgItems = listings.map((listing, id) => (

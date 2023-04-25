@@ -51,6 +51,10 @@ button {
   }
 }
 
+textarea{
+  resize: none;
+}
+
 .textarea {
   padding: 1rem 1.5rem;
   height: 300px;

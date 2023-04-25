@@ -1,10 +1,11 @@
 import React from "react";
 import { ReactComponent as DeleteIcon } from "../assets//svg/deleteIcon.svg";
+import { ReactComponent as EditIcon } from "../assets//svg/editIcon.svg";
 import bedIcon from "../assets/svg/bedIcon.svg";
 import bathtubIcon from "../assets/svg/bathtubIcon.svg";
 import { Link } from "react-router-dom";
 
-const ListingItem = ({ listingData, id, handleDelete }) => {
+const ListingItem = ({ listingData, id, handleDelete, handleEdit }) => {
   return (
     <ul className="categoryListing">
       <Link
@@ -51,6 +52,12 @@ const ListingItem = ({ listingData, id, handleDelete }) => {
           className="removeIcon"
           fill="rgb(231, 76, 60)"
           onClick={() => handleDelete(listingData.id, listingData.name)}
+        />
+      )}
+      {handleEdit && (
+        <EditIcon
+          className="editIcon"
+          onClick={() => handleEdit(listingData.id)}
         />
       )}
     </ul>

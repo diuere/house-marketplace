@@ -44,7 +44,6 @@ function Contact() {
                 className="textarea"
                 value={message}
                 onChange={onChange}
-                style={{ resize: "none" }}
               ></textarea>
             </div>
 
