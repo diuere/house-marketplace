@@ -78,7 +78,7 @@ const Profile = () => {
               name="name"
               id="name"
               className={
-                isDetailsChanging ? "profileNameActive" : "profileName" 
+                isDetailsChanging ? "profileNameActive" : "profileName"
               }
               disabled={!isDetailsChanging}
               value={currentUser.name}

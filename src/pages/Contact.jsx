@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../misc/firebase";
 import { toast } from "react-toastify";
+import { getDocument } from "../helpers/utils";
 
 function Contact() {
   const [message, setMessage] = useState("");
@@ -12,15 +11,12 @@ function Contact() {
   const params = useParams();
 
   useEffect(() => {
-    const getLandlord = async () => {
-      const docRef = doc(db, "users", params.landlordId);
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) setLandlord(docSnap.data());
-      else toast.error("Could not get landlord data");
-    };
-
-    getLandlord();
+    getDocument("users", params.landlordId)
+      .then((data) => {
+        if (data) setLandlord(data);
+        else toast.error("Could not get landlord data");
+      })
+      .catch((err) => console.log(err));
   }, [params.landlordId]);
 
   const onChange = (e) => setMessage(e.target.value);

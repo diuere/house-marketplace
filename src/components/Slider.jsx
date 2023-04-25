@@ -1,9 +1,8 @@
-import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import AliceCarousel from "react-alice-carousel";
 import { useNavigate } from "react-router-dom";
-import { db } from "../misc/firebase";
 import Spinner from "./Spinner";
+import { fetchListings } from "../helpers/utils";
 
 const Slider = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -11,26 +10,10 @@ const Slider = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchListings = async () => {
-      const listingsRef = collection(db, "listings");
-
-      const q = query(listingsRef, orderBy("timestamp", "desc"), limit(5));
-      const querySnap = await getDocs(q);
-
-      const modListing = [];
-
-      querySnap.forEach((doc) => {
-        modListing.push({
-          id: doc.id,
-          data: doc.data(),
-        });
-      });
-
-      setListings(modListing);
+    fetchListings(null, 5).then((data) => {
+      setListings(data);
       setIsLoading(false);
-    };
-
-    fetchListings();
+    });
   }, []);
 
   if (isLoading) return <Spinner />;

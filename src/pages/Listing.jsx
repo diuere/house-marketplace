@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
 import { Link, useParams } from "react-router-dom";
 import { getAuth } from "firebase/auth";
-import { db } from "../misc/firebase";
 import Spinner from "../components/Spinner";
 import shareIcon from "../assets/svg/shareIcon.svg";
 import AliceCarousel from "react-alice-carousel";
+import { getDocument } from "../helpers/utils";
+import { toast } from "react-toastify";
 
 const Listing = () => {
   const [listing, setListing] = useState(null);
@@ -16,16 +16,14 @@ const Listing = () => {
   const auth = getAuth();
 
   useEffect(() => {
-    const fetchListing = async () => {
-      const docRef = doc(db, "listings", params.listingId);
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        setListing(docSnap.data());
-        setIsLoading(false);
-      }
-    };
-    fetchListing();
+    getDocument("listings", params.listingId)
+      .then((data) => {
+        if (data) {
+          setListing(data);
+          setIsLoading(false);
+        } else toast.error("Could not get listing data");
+      })
+      .catch((err) => console.log(err));
   }, [params.listingId]);
 
   const handleShareIconClick = () => {
@@ -50,7 +48,7 @@ const Listing = () => {
       alt=""
     />
   ));
-  
+
   return (
     <main>
       <AliceCarousel

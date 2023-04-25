@@ -1,17 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  collection,
-  getDocs,
-  query,
-  where,
-  orderBy,
-  limit,
-} from "firebase/firestore";
-import { db } from "../misc/firebase";
-import { toast } from "react-toastify";
+import { where } from "firebase/firestore";
 import Spinner from "../components/Spinner";
 import ListingItem from "../components/ListingItem";
+import { fetchListings } from "../helpers/utils";
 
 const Category = () => {
   const [listings, setListings] = useState(null);
@@ -19,39 +11,12 @@ const Category = () => {
   const params = useParams();
 
   useEffect(() => {
-    const fetchListings = async () => {
-      try {
-        // get reference
-        const listingsRef = collection(db, "listings");
-
-        // creating a query
-        const q = query(
-          listingsRef,
-          where("type", "==", params.categoryName),
-          orderBy("timestamp", "desc"),
-          limit(10)
-        );
-
-        // executing the query
-        const querySnap = await getDocs(q);
-
-        // organizing data
-        const listings = [];
-        querySnap.forEach((doc) => {
-          listings.push({
-            id: doc.id,
-            data: doc.data(),
-          });
-        });
-
-        setListings(listings);
+    fetchListings(where("type", "==", params.categoryName), 10)
+      .then((data) => {
+        setListings(data);
         setIsLoading(false);
-      } catch (error) {
-        toast.error("Could not fetch listings");
-      }
-    };
-
-    fetchListings();
+      })
+      .catch((err) => console.log(err));
   }, [params.categoryName]);
 
   if (isLoading) return <Spinner />;
